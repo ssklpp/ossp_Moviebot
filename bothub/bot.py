@@ -56,14 +56,17 @@ class Bot(BaseBot):
         elif message.startswith('/schedule'):
             _, theater_id, theater_name = message.split(maxsplit=2)
             self.send_theater_schedule(theater_id, theater_name, event)
-            
+        elif message == '/start':
+            self.send_welcome_message(event)
+        else:
+            self.send_error_message(event)    
 
     def send_box_office(self, event):
         data = self.get_project_data()
         api_key = data.get('9132dfdc71c366819908f2fdc442187f')
         box_office = BoxOffice(api_key)
         movies = box_office.simplify(box_office.get_movies())
-        rank_message = '\n'.join(['{}. {} {} {}'.format(m['rank'], m['name'], m['day'], m['total']) for m in movies])
+        rank_message = '\n'.join(['{}. {} 금일 관객수 {} 누적 관객수 {}'.format(m['rank'], m['name'], m['day'], m['total']) for m in movies])
         
         response = '요즘 볼만한 영화들의 순위입니다\n{}'.format(rank_message)
 
@@ -103,6 +106,24 @@ class Bot(BaseBot):
             movie_schedules.append('* {}\n  {}'.format(info['Name'], ' '.join([schedule['StartTime'] for schedule in info['Schedules']])))
 
         message = Message(event).set_text(text + '\n'.join(movie_schedules))\
+                                .add_quick_reply('영화순위')\
+                                .add_quick_reply('근처 상영관 찾기')
+        self.send_message(message)
+
+    def send_welcome_message(self, event):
+        message = Message(event).set_text('반가워요.\n\n'\
+                                          '저는 요즘 볼만한 영화들을 알려드리고, '\
+                                          '현재 계신 곳에서 가까운 영화관들의 상영시간표를 알려드려요.\n\n'
+                                          "'영화순위'나 '근처 상영관 찾기'를 입력해보세요.")\
+                                .add_quick_reply('영화순위')\
+                                .add_quick_reply('근처 상영관 찾기')
+        self.send_message(message)
+
+    def send_error_message(self, event):
+        message = Message(event).set_text('잘 모르겠네요.\n\n'\
+                                          '저는 요즘 볼만한 영화들을 알려드리고, '\
+                                          '현재 계신 곳에서 가까운 영화관들의 상영시간표를 알려드려요.\n\n'
+                                          "'영화순위'나 '근처 상영관 찾기'를 입력해보세요.")\
                                 .add_quick_reply('영화순위')\
                                 .add_quick_reply('근처 상영관 찾기')
         self.send_message(message)
