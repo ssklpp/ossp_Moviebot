@@ -1,11 +1,11 @@
-##텔레그램 영화관 챗봇
+# 텔레그램 영화관 챗봇
 
 ### Chosun Univ. Computer engineering Kim TaeWan
 
-Windows 10 Pro
-Python : 3.6.3
-BotHub.Studio
-Telegram
+Windows 10 Pro  
+Python : 3.6.3  
+BotHub.Studio  
+Telegram  
 
 /newbot 명령 이용 봇 생성
 <img src="https://github.com/ssklpp/ossp_Moviebot/blob/master/image/BotFather.PNG">
